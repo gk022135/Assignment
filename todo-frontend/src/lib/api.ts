@@ -85,45 +85,13 @@ export const usersApi = {
     request<{ message: string }>(`/users/${id}`, { method: 'DELETE', token }),
 };
 
-const normalizeTodo = (t: any): Todo => ({
-  id: t.id ?? t._id ?? '',
-  title: t.title,
-  description: t.description ?? '',
-  completed: Boolean(t.completed),
-  userId: typeof t.userId === 'string' ? t.userId : t.userId?._id ?? t.userId?.id ?? '',
-  createdAt: t.createdAt,
-  updatedAt: t.updatedAt,
-});
-
 export const todosApi = {
-  list: async (token: string | null, page = 1, limit = 10) => {
-    const res = await request<PaginatedTodos>(`/todos?page=${page}&limit=${limit}`, { token });
-    return {
-      ...res,
-      data: res.data.map(normalizeTodo),
-    };
-  },
-  create: async (token: string | null, payload: CreateTodoPayload) => {
-    const res = await request<{ message: string; todo: Todo }>('/todos', {
-      method: 'POST',
-      token,
-      body: payload,
-    });
-    return { ...res, todo: normalizeTodo(res.todo) };
-  },
-  update: async (token: string | null, id: string, payload: UpdateTodoPayload) => {
-    const res = await request<{ message: string; todo: Todo }>(`/todos/${id}`, {
-      method: 'PATCH',
-      token,
-      body: payload,
-    });
-    return { ...res, todo: normalizeTodo(res.todo) };
-  },
-  remove: async (token: string | null, id: string) => {
-    const res = await request<{ message: string; todo: Todo }>(`/todos/${id}`, {
-      method: 'DELETE',
-      token,
-    });
-    return { ...res, todo: normalizeTodo(res.todo) };
-  },
+  list: (token: string | null, page = 1, limit = 10) =>
+    request<PaginatedTodos>(`/todos?page=${page}&limit=${limit}`, { token }),
+  create: (token: string | null, payload: CreateTodoPayload) =>
+    request<{ message: string; todo: Todo }>('/todos', { method: 'POST', token, body: payload }),
+  update: (token: string | null, id: string, payload: UpdateTodoPayload) =>
+    request<{ message: string; todo: Todo }>(`/todos/${id}`, { method: 'PATCH', token, body: payload }),
+  remove: (token: string | null, id: string) =>
+    request<{ message: string; todo: Todo }>(`/todos/${id}`, { method: 'DELETE', token }),
 };
